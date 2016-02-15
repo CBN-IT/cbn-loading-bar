@@ -1,0 +1,11 @@
+{
+    "name": "cbn-loading-bar",
+    "private": true,
+    "dependencies": {
+        "polymer": "Polymer/polymer#^1.2",
+        "paper-progress": "PolymerElements/paper-progress#^1.0.0",
+        "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
+        "paper-button": "PolymerElements/paper-button#^1.0.0"
+    },
+    "version": "0.1"
+}

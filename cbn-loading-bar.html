@@ -1,0 +1,87 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+
+<!--
+`cbn-loading-bar` 
+
+    <cbn-loading-bar></cbn-loading-bar>
+
+### Validation
+
+### Styling
+
+@demo demo/index.html
+@class cbn-loading-bar
+-->
+
+<dom-module id="cbn-loading-bar">
+	<style>
+		:host {
+			display: block;
+		}
+		paper-progress.green {
+			/*loading bar*/
+			--paper-progress-active-color: var(--paper-light-green-500);
+			--paper-progress-secondary-color: var(--paper-light-green-100);
+			--paper-progress-height: 8px;
+		}
+	</style>
+	<template>
+		<paper-progress class="green" style="top:auto; width:auto;" id="progress" indeterminate="{{loading}}"></paper-progress>
+	</template>
+</dom-module>
+
+<script>
+	(function () {
+		Polymer({
+
+			is: 'cbn-loading-bar',
+			behaviors: [],
+			properties: {
+				loading:{
+					type: Boolean,
+					notify: true,
+					computed:"isZero(nrAjax)"
+				},
+				nrAjax:{
+					type: Number,
+					value:0
+				}
+			},
+			listeners: {},
+			ready: function () {
+				this.listen(document,"cbn-xhr-send", "addToLoading");
+				this.listen(document,"cbn-xhr-received", "removeFromLoading");
+			},
+			addToLoading:function(event){
+				this.nrAjax++;
+			},
+			removeFromLoading:function(event){
+				this.nrAjax--;
+			},
+			isZero:function(nrAjax){
+				return nrAjax>0;
+			}
+		})
+	})();
+</script>
+
+<script>
+	(function () {
+		var oldSend;
+		// create a callback queue
+		// store the native send()
+		oldSend = XMLHttpRequest.prototype.send;
+		// override the native send()
+		XMLHttpRequest.prototype.send = function () {
+			Polymer.Base.fire("cbn-xhr-send", {xhr: this}, {node: document});
+			this.onreadystatechange = function () {
+				if (this.readyState === 4) {
+					Polymer.Base.fire("cbn-xhr-received", {xhr: this}, {node: document});
+				}
+			};
+			// call the native send()
+			oldSend.apply(this, arguments);
+		}
+	})()
+</script>
