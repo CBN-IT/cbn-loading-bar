@@ -75,11 +75,11 @@
 		// override the native send()
 		XMLHttpRequest.prototype.send = function () {
 			Polymer.Base.fire("cbn-xhr-send", {xhr: this}, {node: document});
-			this.onreadystatechange = function () {
+			this.addEventListener("readystatechange", function () {
 				if (this.readyState === 4) {
 					Polymer.Base.fire("cbn-xhr-received", {xhr: this}, {node: document});
 				}
-			};
+			});
 			// call the native send()
 			oldSend.apply(this, arguments);
 		}
